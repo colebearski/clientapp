@@ -5,6 +5,9 @@
 /.pnp
 .pnp.js
 
+# security
+/src/store.js
+
 # testing
 /coverage
 
