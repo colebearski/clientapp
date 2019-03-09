@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 import Spinner from "../layouts/Spinner";
 
-import { componse, compose } from "redux";
+import { compose } from "redux";
 import { connect } from "react-redux";
-import { firestoreConnect, isLoaded, isEmpty } from "react-redux-firebase";
+import { firestoreConnect } from "react-redux-firebase";
 
 class Clients extends Component {
   state = {
