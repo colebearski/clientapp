@@ -9,8 +9,65 @@ import { connect } from "react-redux";
 import { firestoreConnect } from "react-redux-firebase";
 
 class ClientDetails extends Component {
+  // All form inputs should have state attached
+  state = {
+    showBalanceUpdate: false,
+    balanceUpdateAmount: ""
+  };
+
+  balanceSubmit = e => {
+    e.preventDefault();
+    // console.log(this.state.balanceUpdateAmount);
+
+    const { client, firestore } = this.props;
+    const { balanceUpdateAmount } = this.state;
+
+    const clientUpdate = {
+      balance: parseFloat(balanceUpdateAmount)
+    };
+
+    // Update in firestore
+    firestore.update({ collection: "clients", doc: client.id }, clientUpdate);
+  };
+
+  onChange = e => {
+    this.setState({
+      // Takes name and sets it to value
+      [e.target.name]: e.target.value
+    });
+  };
+
   render() {
     const { client } = this.props;
+    const { showBalanceUpdate, balanceUpdateAmount } = this.state;
+
+    let balanceForm = "";
+    // If balance form should display
+    if (showBalanceUpdate) {
+      balanceForm = (
+        <form onSubmit={this.balanceSubmit}>
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              name="balanceUpdateAmount"
+              placeholder="Add New Balance"
+              value={balanceUpdateAmount}
+              onChange={this.onChange}
+            />
+            <div className="input-group-append">
+              <input
+                type="submit"
+                value="Update"
+                className="btn btn-outline-dark"
+              />
+            </div>
+          </div>
+        </form>
+      );
+    } else {
+      balanceForm = null;
+    }
 
     if (client) {
       return (
@@ -54,9 +111,21 @@ class ClientDetails extends Component {
                         })}
                       >
                         ${parseFloat(client.balance).toFixed(2)}
-                      </span>
+                      </span>{" "}
+                      <small>
+                        <a
+                          href="#!"
+                          onClick={() =>
+                            this.setState({
+                              showBalanceUpdate: !this.state.showBalanceUpdate
+                            })
+                          }
+                        >
+                          <i className="fas fa-pencil-alt" />
+                        </a>
+                      </small>
                     </h3>
-                    {/* Balance Form */}
+                    {balanceForm}
                   </div>
                 </div>
 
@@ -85,6 +154,7 @@ ClientDetails.propTypes = {
 };
 
 export default compose(
+  // always provides access to this.props.firestore
   firestoreConnect(props => [
     { collection: "clients", storeAs: "client", doc: props.match.params.id }
   ]),
