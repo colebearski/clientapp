@@ -15,6 +15,7 @@ class ClientDetails extends Component {
     balanceUpdateAmount: ""
   };
 
+  // Update balance
   balanceSubmit = e => {
     e.preventDefault();
     // console.log(this.state.balanceUpdateAmount);
@@ -28,6 +29,16 @@ class ClientDetails extends Component {
 
     // Update in firestore
     firestore.update({ collection: "clients", doc: client.id }, clientUpdate);
+  };
+
+  // Delete client
+  // Should provide a warning/confirm prior to running f(x)
+  onDelete = () => {
+    const { client, firestore, history } = this.props;
+
+    firestore
+      .delete({ collection: "clients", doc: client.id })
+      .then(() => history.push("/"));
   };
 
   onChange = e => {
@@ -83,7 +94,9 @@ class ClientDetails extends Component {
                 <Link to={`/client/edit/${client.id}`} className="btn btn-dark">
                   Edit
                 </Link>
-                <button className="btn btn-danger">Delete</button>
+                <button onClick={this.onDelete} className="btn btn-danger">
+                  Delete
+                </button>
               </div>
             </div>
           </div>
